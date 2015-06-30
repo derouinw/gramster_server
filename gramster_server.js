@@ -63,6 +63,21 @@ var server = http.createServer(function(req, res) {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(response));
       });
+    } else if (pathname == '/api/recent/') {
+      // View recent images
+      console.log('View recent images');
+
+      dbImages.all(function(err, doc) {
+        if (err) {
+          console.log('Error loading recent: ' + err);
+          res.writeHead(400);
+          res.end('Error loading recent');
+          return err;
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(doc.toString());
+      });
     }
   }
 
