@@ -10,9 +10,11 @@ var app = express();
 var api = require('./api');
 var user = require('./user');
 var image = require('./image');
+var images = require('./images/images');
 app.use('/api', api);
 app.use('/user', user);
 app.use('/image', image);
+app.use('/images', images);
 app.set('view engine', 'jade');
 
 // Homepage
@@ -79,7 +81,6 @@ app.get('/', function(req, res) {
 }); // get /
 
 // Start the server
-//server.listen(12345);
 var server = app.listen(parseInt(global.PORT), function() {
   var host = server.address().address;
   var port = server.address().port;

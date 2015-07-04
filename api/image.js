@@ -21,6 +21,12 @@ router.get('/view/:id', function(req, res) {
 
     console.log('Sending image: ' + req.params.id);
     res.writeHead(200, { 'Content-Type': 'application/json' });
+
+    // Make sure its sending a valid path
+    if (!(doc.path.indexOf('http://') == 0 || doc.path.indexOf('/images/') == 0)) {
+        doc.path = '/images/' + doc.path;
+    }
+
     res.write(JSON.stringify(doc));
     res.end();
   });
