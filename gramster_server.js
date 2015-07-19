@@ -8,11 +8,9 @@ var app = express();
 
 // Routers
 var api = require('./api');
-var user = require('./user');
 var image = require('./image');
 var images = require('./images/images');
 app.use('/api', api);
-app.use('/user', user);
 app.use('/image', image);
 app.use('/images', images);
 app.set('view engine', 'jade');

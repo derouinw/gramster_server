@@ -10,5 +10,7 @@ module.exports = {
   'API_IMAGE_NEW' : '/api/image/',
   'API_USER_VIEW' : '/api/user/',
   'API_USER_NEW' : '/api/user/',
-  'SITE_IMAGE_VIEW' : '/image/'
+  'SITE_IMAGE_VIEW' : '/image/',
+  'KEYSPACE' : 'gramster',
+  'RECENT_NUMBER' : 10
 };

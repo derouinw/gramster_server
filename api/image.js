@@ -1,17 +1,21 @@
 // api/image.js
 // Handles image api calls
 // Bill - 6/30/2015
-var cradle = require('cradle');
+var cassandra = require('cassandra-driver');
 var express = require('express');
+var global = require('../global');
 var router = express.Router();
-
-var dbImages = new(cradle.Connection)().database('gramster_images');
+var client = new cassandra.Client({ contactPoints: ['127.0.0.1'], keyspace: global.KEYSPACE})
 
 // Handle /api/image/[id]
 router.get('/view/:id', function(req, res) {
   console.log('Load image: ' + req.params.id);
 
-  dbImages.get(req.params.id, function(err, doc) {
+  var id = parseInt(req.params.id);
+  console.log('Id:' + id + ', type: ' + typeof id);
+
+  var query = 'SELECT * FROM posts where id=?;';
+  client.execute(query, [id], { prepare : true }, function(err, result) {
     if (err) {
       console.log('Error loading image: ' + err);
       res.writeHead(400);
@@ -19,16 +23,10 @@ router.get('/view/:id', function(req, res) {
       return err;
     }
 
-    console.log('Sending image: ' + req.params.id);
-    res.writeHead(200, { 'Content-Type': 'application/json' });
+    var obj = result.rows[0];
+    console.log('Loaded image: ' + obj.title);
 
-    // Make sure its sending a valid path
-    if (!(doc.path.indexOf('http://') == 0 || doc.path.indexOf('/images/') == 0)) {
-        doc.path = '/images/' + doc.path;
-    }
-
-    res.write(JSON.stringify(doc));
-    res.end();
+    res.send(obj);
   });
 });
 
@@ -36,17 +34,20 @@ router.get('/view/:id', function(req, res) {
 router.get('/recent', function(req, res) {
   console.log('Load recent images');
 
-  dbImages.all(function(err, doc) {
+  var query = 'SELECT * FROM posts;';
+  client.execute(query, function(err, result) {
     if (err) {
-      console.log('Error loading recent images: ' + err);
+      console.log('Error loading image: ' + err);
       res.writeHead(400);
-      res.end('Error loading recent');
+      res.end('Error loading image');
       return err;
     }
 
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.write(JSON.stringify(doc));
-    res.end();
+    if (result.rows.length > global.RECENT_NUMBER) {
+      res.send(result.rows.slice(0, global.RECENT_NUMBER));
+    } else {
+      res.send(result.rows);
+    }
   });
 });
 
@@ -64,16 +65,26 @@ router.post('/', function(req, res) {
       console.log('Received package: ' + body);
       var data = JSON.parse(body);
 
-      dbImages.save(data, function(err, response) {
+      var query = 'INSERT INTO posts (id, title, path, description, time, likes, tags) VALUES (?,?,?,?,?,?,?);';
+      var params = [
+        body.id,
+        body.title,
+        body.path,
+        body.description,
+        Date.now(),
+        0,
+        []
+      ];
+      client.execute(query, params, { prepare: true }, function(err) {
         if (err) {
-          console.log('Error adding image: ' + err);
+          console.log('Error loading image: ' + err);
           res.writeHead(400);
-          res.end('Error adding image');
+          res.end('Error loading image');
+          return err;
         }
 
-        console.log('Add image successful: ' + response);
-        res.end('Image added');
-        body = '';
+        console.log('Row updated');
+        res.end('Db updated');
       });
     }
   });
