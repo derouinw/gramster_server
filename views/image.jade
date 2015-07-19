@@ -1,8 +1,13 @@
 html
-  head
-    title!= title
-  body
-    h1!= title
-    a(href!= author_path)!= author
-    img(src!= path)
-    p!= description
+	head
+		title!= title
+	body
+		h1!= title
+		img(src!= path)
+		p!= description
+		p!= time
+		p #{likes} likes
+		ul
+			each tag in tags
+				li!= tag
+				

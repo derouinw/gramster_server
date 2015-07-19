@@ -29,10 +29,11 @@ router.get('/:id', function(req, res) {
 
        res.render('image', {
           title: data.title,
-          author_path: '/user/' + data.author,
-          author: data.author,
-          path: data.path,
-          description: data.description
+          path: global.HOST_LOCAL + ':' + global.PORT + global.IMAGE_PATH + data.path,
+          description: data.description,
+          time: data.time,
+          likes: data.likes,
+          tags: data.tags
         });
         body = '';
      }

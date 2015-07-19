@@ -18,7 +18,7 @@ app.set('view engine', 'jade');
 // Homepage
 app.get('/', function(req, res) {
   console.log('View index');
-
+  
   http.get(global.HOST_LOCAL + ':'
            + global.PORT
            + global.API_IMAGE_RECENT,
@@ -57,7 +57,7 @@ app.get('/', function(req, res) {
               var image_data = JSON.parse(image_body);
               console.log('Loaded image ' + index + ': ' + image_body);
 
-              images[index].path = global.SITE_IMAGE_VIEW + image_data._id;
+              images[index].path = global.SITE_IMAGE_VIEW + image_data.id;
               images[index].title = image_data.title;
               cb_done++;
 
