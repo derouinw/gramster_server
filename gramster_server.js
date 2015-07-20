@@ -84,7 +84,7 @@ app.get('/', function(req, res) {
 }); // get /
 
 // Start the server
-var server = app.listen(parseInt(global.PORT), function() {
+var server = app.listen(global.PORT, function() {
   var host = server.address().address;
   var port = server.address().port;
 
