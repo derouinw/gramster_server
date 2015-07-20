@@ -21,8 +21,7 @@ app.set('view engine', 'jade');
 app.get('/', function(req, res) {
   console.log('View index');
 
-  http.get(global.HOST_LOCAL + ':'
-           + global.PORT
+  http.get(global.HOST_LOCAL
            + global.API_IMAGE_RECENT,
            function(get_res) {
    var body = '';
