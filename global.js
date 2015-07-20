@@ -4,7 +4,7 @@
 module.exports = {
   'HOST' : 'http://192.168.1.54',
   'HOST_LOCAL' : 'http://10.123.129.165',
-  'PORT' : '3000',
+  'PORT' : '5000',
   'API_IMAGE_VIEW' : '/api/image/view/',
   'API_IMAGE_RECENT' : '/api/image/recent/',
   'API_IMAGE_NEW' : '/api/image/',
