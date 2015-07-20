@@ -32,3 +32,8 @@ node_modules
 # Mac file
 .DS_Store
 .fuse_hidden*
+
+#Image files
+*.jpg
+*.jpeg
+*.png

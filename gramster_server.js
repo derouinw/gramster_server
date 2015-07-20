@@ -10,15 +10,17 @@ var app = express();
 var api = require('./api');
 var image = require('./image');
 var images = require('./images/images');
+var upload = require('./upload');
 app.use('/api', api);
 app.use('/image', image);
 app.use('/images', images);
+app.use('/upload', upload);
 app.set('view engine', 'jade');
 
 // Homepage
 app.get('/', function(req, res) {
   console.log('View index');
-  
+
   http.get(global.HOST_LOCAL + ':'
            + global.PORT
            + global.API_IMAGE_RECENT,

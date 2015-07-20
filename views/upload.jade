@@ -1,0 +1,17 @@
+html
+	head
+		title Upload an image
+	body
+		h1 Upload an image to Gramster
+		p!= message
+		form(action="/upload" method="post" enctype="multipart/form-data")
+			label(for="file") Select your image:
+			input(type="file" name="file" id="file")
+			span(class="hint") Supported files: jpg, jpeg, png
+			br
+			span(class="hint") Title
+			input(type="text" name="title")
+			br
+			span(class="hint") Description
+			input(type="text" name="description")
+			button(type="submit") Upload

@@ -12,7 +12,6 @@ router.get('/view/:id', function(req, res) {
   console.log('Load image: ' + req.params.id);
 
   var id = parseInt(req.params.id);
-  console.log('Id:' + id + ', type: ' + typeof id);
 
   var query = 'SELECT * FROM posts where id=?;';
   client.execute(query, [id], { prepare : true }, function(err, result) {
@@ -67,19 +66,18 @@ router.post('/', function(req, res) {
 
       var query = 'INSERT INTO posts (id, title, path, description, time, likes, tags) VALUES (?,?,?,?,?,?,?);';
       var params = [
-        body.id,
-        body.title,
-        body.path,
-        body.description,
+        data.id,
+        data.title,
+        data.path,
+        data.description,
         Date.now(),
         0,
-        []
+        ['#hashtag']
       ];
       client.execute(query, params, { prepare: true }, function(err) {
         if (err) {
           console.log('Error loading image: ' + err);
-          res.writeHead(400);
-          res.end('Error loading image');
+          res.status(400).send('Error loading image');
           return err;
         }
 
