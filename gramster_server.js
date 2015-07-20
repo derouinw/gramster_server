@@ -83,8 +83,10 @@ app.get('/', function(req, res) {
  }); // get recent
 }); // get /
 
+var port = process.env.PORT || global.PORT;
+
 // Start the server
-var server = app.listen(global.PORT, function() {
+var server = app.listen(parseInt(port), function() {
   var host = server.address().address;
   var port = server.address().port;
 
