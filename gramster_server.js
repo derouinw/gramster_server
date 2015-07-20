@@ -61,10 +61,13 @@ app.get('/', function(req, res) {
 
               images[index].path = global.SITE_IMAGE_VIEW + image_data.id;
               images[index].title = image_data.title;
+              images[index].time = image_data.time;
               cb_done++;
 
               // If all cb's have finished, render the page
               if (cb_done == data.length) {
+                images.sort(images_compare);
+
                 res.render('index', {
                   title: 'Gramster',
                   message: 'Welcome to Gramster!',
@@ -87,3 +90,12 @@ var server = app.listen(parseInt(global.PORT), function() {
 
   console.log('Gramster server listening at http://%s:%s', host, port);
 });
+
+function images_compare(a, b) {
+  if (a.time > b.time) {
+    return -1;
+  } else if (a.time < b.time) {
+    return 1;
+  }
+  return 0;
+}
