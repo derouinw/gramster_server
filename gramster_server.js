@@ -4,6 +4,8 @@
 var http = require('http');
 var global = require('./global');
 var express = require('express');
+var aws = require('aws-sdk');
+var path = require('path');
 var app = express();
 
 // Routers
@@ -16,11 +18,14 @@ app.use('/image', image);
 app.use('/images', images);
 app.use('/upload', upload);
 app.set('view engine', 'jade');
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Homepage
 app.get('/', function(req, res) {
   console.log('View index');
 
+  console.log('Loading: ' + global.HOST_LOCAL + ':' + global.PORT
+           + global.API_IMAGE_RECENT);
   http.get(global.HOST_LOCAL + ':' + global.PORT
            + global.API_IMAGE_RECENT,
            function(get_res) {
@@ -80,6 +85,34 @@ app.get('/', function(req, res) {
    }); // on(end)
  }); // get recent
 }); // get /
+
+app.get('/sign_s3', function(req, res){
+  console.log('Uploading');
+  aws.config.update({accessKeyId: global.AWS_ACCESS_KEY, secretAccessKey: global.AWS_SECRET_KEY});
+  var s3 = new aws.S3();
+  var s3_params = {
+    Bucket: global.S3_BUCKET,
+    Key: req.query.file_name,
+    Expires: 60,
+    ContentType: req.query.file_type,
+    ACL: 'public-read'
+  };
+  console.dir(s3_params);
+  s3.getSignedUrl('putObject', s3_params, function(err, data){
+    if(err){
+      console.log(err);
+    }
+    else{
+      var return_data = {
+        signed_request: data,
+        url: 'https://'+global.S3_BUCKET+'.s3.amazonaws.com/'+req.query.file_name
+      };
+      console.log('Return data: ' + JSON.stringify(return_data));
+      res.write(JSON.stringify(return_data));
+      res.end();
+    }
+  });
+});
 
 var port = process.env.PORT || global.PORT;
 

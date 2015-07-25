@@ -3,7 +3,7 @@
 // Bill - 6/30/2015
 
 module.exports = {
-  'HOST' : 'http://192.168.1.54',
+  'HOST' : 'http://gramster.herokuapp.com',
   'HOST_LOCAL' : 'http://127.0.0.1',
   'PORT' : '',
   'API_IMAGE_VIEW' : '/api/image/view/',
@@ -15,5 +15,8 @@ module.exports = {
   'IMAGE_PATH' : '/images/',
   'KEYSPACE' : 'gramster',
   'RECENT_NUMBER' : 10,
-  'DB_URL' : 'mongodb://gramster:password@ds053718.mongolab.com:53718/heroku_sp5vvkfq'
+  'DB_URL' : 'mongodb://gramster:password@ds053718.mongolab.com:53718/heroku_sp5vvkfq',
+  'AWS_ACCESS_KEY' : process.env.AWS_ACCESS_KEY_ID,
+  'AWS_SECRET_KEY' : process.env.AWS_SECRET_ACCESS_KEY,
+  'S3_BUCKET' : process.env.S3_BUCKET_NAME
 };
