@@ -49,7 +49,8 @@ router.post('/', function(req, res) {
 			return res.status(415).send('Supported image formats: jpeg, jpg, png');
 		}
 
-		var targetName = uid(22) + '.' + extension;
+		var id = uid(22);
+		var targetName = id + '.' + extension;
 		var targetPath = path.join(TARGET_PATH, targetName);
 
 		fstream = fs.createWriteStream(targetPath);
@@ -57,6 +58,7 @@ router.post('/', function(req, res) {
 		fstream.on('close', function() {
 
 			var image_data = {
+				_id : id,
 				title: title,
 				path: targetName,
 				description : description
@@ -72,7 +74,7 @@ router.post('/', function(req, res) {
 
 				console.log('Upload successful:' + body);
 				res.writeHead(302, { 
-					'Location' : global.HOST_LOCAL + ':' + global.PORT + global.SITE_IMAGE_VIEW + image_data.id });
+					'Location' : global.HOST_LOCAL + ':' + global.PORT + global.SITE_IMAGE_VIEW + id });
 				res.end();
 			});
 		});
