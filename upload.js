@@ -176,7 +176,8 @@ function upload_signed_file(file) {
 	s3.putObject({
 	    Bucket: global.S3_BUCKET,
 	    Key: file.name,
-	    Body: file
+	    Body: file,
+	    ContentLength: global.fileSize(file)
 	}, function(err, data) {
 		if (err) {
 			console.log(err);

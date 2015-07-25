@@ -19,5 +19,10 @@ module.exports = {
   'AWS_ACCESS_KEY' : process.env.AWS_ACCESS_KEY_ID,
   'AWS_SECRET_KEY' : process.env.AWS_SECRET_ACCESS_KEY,
   'S3_BUCKET' : process.env.S3_BUCKET_NAME,
-  'S3_HOST' : 'http://gramster-images.s3.amazonaws.com/'
+  'S3_HOST' : 'http://gramster-images.s3.amazonaws.com/',
+  'fileSize' : 	function(filename) {
+ 					var stats = fs.statSync(filename)
+ 					var fileSizeInBytes = stats["size"]
+ 					return fileSizeInBytes
+				}
 };
