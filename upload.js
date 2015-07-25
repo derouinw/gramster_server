@@ -177,7 +177,7 @@ function upload_signed_file(file) {
 	    Bucket: global.S3_BUCKET,
 	    Key: file.name,
 	    Body: file,
-	    ContentLength: global.fileSize(file)
+	    ContentLength: fileSize(file)
 	}, function(err, data) {
 		if (err) {
 			console.log(err);
@@ -227,4 +227,10 @@ function sign_request(file_name, file_type) {
 		  return JSON.stringify(return_data);
 		}
 	});
+}
+
+function fileSize(filename) {
+	var stats = fs.statSync(filename);
+	var fileSizeInBytes = stats["size"];
+	return fileSizeInBytes;
 }
