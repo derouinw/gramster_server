@@ -1,14 +1,10 @@
 // global.js
 // Holds various global variables
 // Bill - 6/30/2015
-var os = require('os');
-
-var hostname = os.hostname();
-console.log("host: " + hostname);
 
 module.exports = {
   'HOST' : 'http://192.168.1.54',
-  'HOST_LOCAL' : 'http://gramster.herokuapp.com/',
+  'HOST_LOCAL' : 'http://127.0.0.1',
   'PORT' : '',
   'API_IMAGE_VIEW' : '/api/image/view/',
   'API_IMAGE_RECENT' : '/api/image/recent/',
