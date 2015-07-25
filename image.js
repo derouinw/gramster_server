@@ -33,7 +33,8 @@ router.get('/:id', function(req, res) {
           description: data.description,
           time: data.time,
           likes: data.likes,
-          tags: data.tags
+          tags: data.tags,
+          comments: data.comments
         });
         body = '';
      }

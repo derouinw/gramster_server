@@ -21,7 +21,7 @@ app.set('view engine', 'jade');
 app.get('/', function(req, res) {
   console.log('View index');
 
-  http.get(global.HOST_LOCAL
+  http.get(global.HOST_LOCAL + ':' + global.PORT
            + global.API_IMAGE_RECENT,
            function(get_res) {
    var body = '';
@@ -41,8 +41,8 @@ app.get('/', function(req, res) {
 
        for (var i = 0; i < data.length; i++) {
          images[i] = {};
-         http.get(global.API_IMAGE_VIEW
-                  + data[i].id, function(get_image) {
+         http.get(global.HOST_LOCAL + ':' + global.PORT + global.API_IMAGE_VIEW
+                  + data[i]._id, function(get_image) {
           var index = cb++;
           var image_body = '';
 
@@ -57,7 +57,7 @@ app.get('/', function(req, res) {
               var image_data = JSON.parse(image_body);
               console.log('Loaded image ' + index + ': ' + image_body);
 
-              images[index].path = global.SITE_IMAGE_VIEW + image_data.id;
+              images[index].path = global.SITE_IMAGE_VIEW + image_data._id;
               images[index].title = image_data.title;
               images[index].time = image_data.time;
               cb_done++;
