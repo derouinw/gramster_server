@@ -29,7 +29,7 @@ router.get('/:id', function(req, res) {
 
        res.render('image', {
           title: data.title,
-          path: global.HOST_LOCAL + ':' + global.PORT + global.IMAGE_PATH + data.path,
+          path: global.S3_PATH + data.path,
           description: data.description,
           time: data.time,
           likes: data.likes,

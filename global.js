@@ -18,5 +18,6 @@ module.exports = {
   'DB_URL' : 'mongodb://gramster:password@ds053718.mongolab.com:53718/heroku_sp5vvkfq',
   'AWS_ACCESS_KEY' : process.env.AWS_ACCESS_KEY_ID,
   'AWS_SECRET_KEY' : process.env.AWS_SECRET_ACCESS_KEY,
-  'S3_BUCKET' : process.env.S3_BUCKET_NAME
+  'S3_BUCKET' : process.env.S3_BUCKET_NAME,
+  'S3_HOST' : 'http://gramster-images.s3.amazonaws.com/'
 };
