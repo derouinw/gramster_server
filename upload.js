@@ -10,9 +10,7 @@ var mime = require('mime');
 var uid = require('uid2');
 var request = require('request');
 var busboy = require('connect-busboy');
-var cassandra = require('cassandra-driver');
 var router = express.Router();
-var client = new cassandra.Client({ contactPoints: ['127.0.0.1'], keyspace: global.KEYSPACE})
 
 var TARGET_PATH = __dirname + '/images/';
 var IMAGE_TYPES = ['image/jpeg', 'image/png'];

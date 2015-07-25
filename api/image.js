@@ -4,7 +4,6 @@
 var express = require('express');
 var global = require('../global');
 var router = express.Router();
-var uuid = require('node-uuid');
 var client = require('mongodb').MongoClient;
 
 // Handle /api/image/[id]
@@ -109,8 +108,8 @@ router.post('/', function(req, res) {
 
           console.log('Row updated');
           res.end('Db updated');
+          db.close();
         });
-        db.close();
       });
     }
   });
