@@ -9,7 +9,7 @@ console.log("host: " + hostname);
 module.exports = {
   'HOST' : 'http://192.168.1.54',
   'HOST_LOCAL' : 'http://127.0.0.1',
-  'PORT' : '5000',
+  'PORT' : '',
   'API_IMAGE_VIEW' : '/api/image/view/',
   'API_IMAGE_RECENT' : '/api/image/recent/',
   'API_IMAGE_NEW' : '/api/image/',

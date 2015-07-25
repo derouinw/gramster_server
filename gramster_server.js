@@ -88,6 +88,8 @@ var server = app.listen(parseInt(port), function() {
   var host = server.address().address;
   var port = server.address().port;
 
+  global.PORT = port;
+
   console.log('Gramster server listening at http://%s:%s', host, port);
 });
 
