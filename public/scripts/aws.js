@@ -1,4 +1,4 @@
-(function() {
+/*(function() {
     document.getElementById("file").onchange = function(){
         console.log('File changed');
         var files = document.getElementById("file").files;
@@ -10,7 +10,7 @@
             get_signed_request(file);
         }
     };
-})();
+})();*/
 
 function get_signed_request(file){
     console.log('Get signed request');
