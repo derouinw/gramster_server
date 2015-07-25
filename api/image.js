@@ -1,11 +1,11 @@
 // api/image.js
 // Handles image api calls
 // Bill - 6/30/2015
-var cassandra = require('cassandra-driver');
 var express = require('express');
 var global = require('../global');
 var router = express.Router();
-var client = new cassandra.Client({ contactPoints: ['127.0.0.1'], keyspace: global.KEYSPACE})
+var uuid = require('node-uuid');
+var client = require('mongodb').MongoClient;
 
 // Handle /api/image/[id]
 router.get('/view/:id', function(req, res) {
@@ -64,25 +64,29 @@ router.post('/', function(req, res) {
       console.log('Received package: ' + body);
       var data = JSON.parse(body);
 
-      var query = 'INSERT INTO posts (id, title, path, description, time, likes, tags) VALUES (?,?,?,?,?,?,?);';
-      var params = [
-        data.id,
-        data.title,
-        data.path,
-        data.description,
-        Date.now(),
-        0,
-        ['#hashtag']
-      ];
-      client.execute(query, params, { prepare: true }, function(err) {
+      client.connect(global.DB_URL, function(err, db) {
         if (err) {
           console.log('Error loading image: ' + err);
           res.status(400).send('Error loading image');
           return err;
         }
 
-        console.log('Row updated');
-        res.end('Db updated');
+        data._id = uuid.v1();
+        data.time = Date.now();
+        data.likes = 0;
+        data.tags = [];
+        data.comments = [];
+        db.collection('posts').insertOne(data, function(err, result) {
+          if (err) {
+            console.log('Error loading image: ' + err);
+            res.status(400).send('Error loading image');
+            return err;
+          }
+
+          console.log('Row updated');
+          res.end('Db updated');
+        });
+        db.close();
       });
     }
   });

@@ -41,8 +41,7 @@ app.get('/', function(req, res) {
 
        for (var i = 0; i < data.length; i++) {
          images[i] = {};
-         http.get(global.HOST_LOCAL + ':'
-                  + global.PORT + global.API_IMAGE_VIEW
+         http.get(global.API_IMAGE_VIEW
                   + data[i].id, function(get_image) {
           var index = cb++;
           var image_body = '';
