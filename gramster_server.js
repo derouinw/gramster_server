@@ -6,6 +6,7 @@ var global = require('./global');
 var express = require('express');
 var aws = require('aws-sdk');
 var path = require('path');
+var bodyParser = require('body-parser');
 var app = express();
 
 // Routers
@@ -19,6 +20,8 @@ app.use('/images', images);
 app.use('/upload', upload);
 app.set('view engine', 'jade');
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 // Homepage
 app.get('/', function(req, res) {

@@ -1,12 +1,33 @@
 html
 	head
 		title!= title
+		script(type='text/javascript').
+			console.log('Started');
+			function like() {
+				var p = document.getElementById('likes');
+				
+				console.log('Clicked');
+				// Update likes by adding 1
+				var text = p.innerHTML;
+				var likes = parseInt(text.substring(0, text.indexOf(' '))) + 1;
+				p.innerHTML = likes + ' likes';
+				
+				var http = new XMLHttpRequest();
+				var url = window.location.href;
+				var params = "likes=true";
+				http.open("POST", url, true);
+
+				//Send the proper header information along with the request
+				http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				http.send(params);
+			}
 	body
 		h1!= title
 		img(src!= path)
 		p!= description
 		p!= time
-		p #{likes} likes
+		p(id='likes') #{likes} likes
+		button(type='button', onclick='like()') Like
 		ul
 			each tag in tags
 				li!= tag
