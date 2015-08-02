@@ -3,8 +3,12 @@
 // Bill - 6/30/2015
 var express = require('express');
 var global = require('../global');
+var bodyParser = require('body-parser');
 var router = express.Router();
 var client = require('mongodb').MongoClient;
+
+router.use(bodyParser.json()); // support json encoded bodies
+router.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 // Handle /api/image/[id]
 router.get('/view/:id', function(req, res) {
@@ -113,6 +117,76 @@ router.post('/', function(req, res) {
       });
     }
   });
+});
+
+// Update an image
+router.post('/:id', function(req, res) {
+  console.log('Updating image: ' + req.params.id);
+
+  var like = req.body.likes;
+  var comment = req.body.comment;
+
+  if (like == 'true') {
+    client.connect(global.DB_URL, function(err, db) {
+      if (err) {
+        console.log('Error updating image: ' + err);
+        res.writeHead(400);
+        res.end('Error updating image');
+        return err;
+      }
+
+      db.collection('posts').find({ "_id" : req.params.id }).limit(1).toArray(function(err, items) {
+        if (err) {
+          console.log('Error updating image: ' + err);
+          res.writeHead(400);
+          res.end('Error updating image');
+          return err;
+        }
+
+        likes = items[0].likes + 1;
+        db.collection('posts').updateOne(
+          { '_id' : req.params.id },
+          { $set: {
+              'likes' : likes,
+              'updated' : Date.now()
+          }}, function(err, results) {
+            console.log('Post liked');
+            res.end();
+          }); // update
+      }); // find
+    }); // connect
+  } else if (comment != null) {
+    client.connect(global.DB_URL, function(err, db) {
+      if (err) {
+        console.log('Error updating image: ' + err);
+        res.writeHead(400);
+        res.end('Error updating image');
+        return err;
+      }
+
+      db.collection('posts').find({ "_id" : req.params.id }).limit(1).toArray(function(err, items) {
+        if (err) {
+          console.log('Error updating image: ' + err);
+          res.writeHead(400);
+          res.end('Error updating image');
+          return err;
+        }
+
+        var comments = items[0].comments;
+        comments.push(comment);
+
+        db.collection('posts').updateOne(
+          { '_id' : req.params.id },
+          { $set: {
+              'comments' : comments,
+              'updated' : Date.now()
+          }}, function(err, results) {
+            console.log('Comment posted');
+            res.end();
+        });
+      });
+    });
+  }
 });
 
 module.exports = router;
