@@ -5,7 +5,39 @@ html
 		h1!= message
 		p
 			a(href="/upload") Upload an image
-		ul
-			each post in posts
-				li
-					a(href!= post.path)!= post.title
+		ul(id="posts")
+					
+		script(type='text/javascript').
+			// Load posts asynchronously
+			var http = new XMLHttpRequest();
+			var url = "/api/image/recent";
+			http.open("GET", url, true);
+
+			//Send the proper header information along with the request
+			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			http.onreadystatechange = function() {
+				if(http.readyState == 4 && http.status == 200) {
+					var response = JSON.parse(http.response);
+					response.sort(posts_compare);
+					
+					var list = document.getElementById('posts');
+					for (var i = 0; i < response.length; i++) {
+						var entry = document.createElement('li');
+						var link = document.createElement('a');
+						link.appendChild(document.createTextNode(response[i].title));
+						link.href = '/image/' + response[i]._id;
+						entry.appendChild(link);
+						list.appendChild(entry);
+					}
+				}
+			}
+			http.send();
+			
+			function posts_compare(a, b) {
+			  if (a.updated > b.updated) {
+			    return -1;
+			  } else if (a.updated < b.updated) {
+			    return 1;
+			  }
+			  return 0;
+			}

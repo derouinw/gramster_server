@@ -27,67 +27,10 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.get('/', function(req, res) {
   console.log('View index');
 
-  console.log('Loading: ' + global.HOST_LOCAL + ':' + global.PORT
-           + global.API_IMAGE_RECENT);
-  http.get(global.HOST_LOCAL + ':' + global.PORT
-           + global.API_IMAGE_RECENT,
-           function(get_res) {
-   var body = '';
-
-   // Load the data
-   get_res.on('data', function(chunk) {
-     body += chunk.toString();
-   });
-
-   // Render the page
-   get_res.on('end', function() {
-     if (body != null) {
-       console.log('Received: ' + body);
-       var data = JSON.parse(body);
-       var cb = 0, cb_done = 0;
-       var images = [];
-
-       for (var i = 0; i < data.length; i++) {
-         images[i] = {};
-         http.get(global.HOST_LOCAL + ':' + global.PORT + global.API_IMAGE_VIEW
-                  + data[i]._id, function(get_image) {
-          var index = cb++;
-          var image_body = '';
-
-          // Load the data
-          get_image.on('data', function(chunk) {
-            image_body += chunk.toString();
-          });
-
-          // Save the info
-          get_image.on('end', function() {
-            if (image_body != null) {
-              var image_data = JSON.parse(image_body);
-              console.log('Loaded image ' + index + ': ' + image_body);
-
-              images[index].path = global.SITE_IMAGE_VIEW + image_data._id;
-              images[index].title = image_data.title;
-              images[index].time = image_data.time;
-              images[index].updated = image_data.updated;
-              cb_done++;
-
-              // If all cb's have finished, render the page
-              if (cb_done == data.length) {
-                images.sort(images_compare);
-
-                res.render('index', {
-                  title: 'Gramster',
-                  message: 'Welcome to Gramster!',
-                  posts: images
-                });
-              }
-            }
-          }); // on(end)
-        }); // get image
-      } // for
-     }
-   }); // on(end)
- }); // get recent
+ res.render('index', {
+   title: 'Gramster',
+   message: 'Welcome to Gramster!'
+ });
 }); // get /
 
 app.get('/sign_s3', function(req, res){
@@ -129,12 +72,3 @@ var server = app.listen(parseInt(port), function() {
 
   console.log('Gramster server listening at http://%s:%s', host, port);
 });
-
-function images_compare(a, b) {
-  if (a.updated > b.updated) {
-    return -1;
-  } else if (a.updated < b.updated) {
-    return 1;
-  }
-  return 0;
-}
