@@ -6,7 +6,6 @@ html
 			function like() {
 				var p = document.getElementById('likes');
 				
-				console.log('Clicked');
 				// Update likes by adding 1
 				var text = p.innerHTML;
 				var likes = parseInt(text.substring(0, text.indexOf(' '))) + 1;
@@ -21,6 +20,31 @@ html
 				http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 				http.send(params);
 			}
+			
+			function comment() {
+				console.log('Comment');
+				var c = document.getElementById('comment');
+				
+				var text = c.value;
+				
+				var http = new XMLHttpRequest();
+				var url = window.location.href;
+				var params = "comment=" + text;
+				http.open("POST", url, true);
+
+				//Send the proper header information along with the request
+				http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				http.onreadystatechange = function() { //Call a function when the state changes.
+			    if(http.readyState == 4 && http.status == 200) {
+						c.value = "";
+						var list = document.getElementById('comments');
+						var entry = document.createElement('li');
+						entry.appendChild(document.createTextNode(text));
+						list.appendChild(entry);
+			    }
+				}
+				http.send(params);
+			}
 	body
 		h1!= title
 		img(src!= path)
@@ -32,7 +56,9 @@ html
 			each tag in tags
 				li!= tag
 		p Comments
-		ul
+		ul(id='comments')
 			each comment in comments
 				li!= comment
+		input(type="text", id="comment")
+		button(type="button",onclick="comment()") Comment
 				

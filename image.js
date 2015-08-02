@@ -52,7 +52,10 @@ router.get('/:id', function(req, res) {
 router.post('/:id', function(req, res) {
   console.log('Update post: ' + req.params.id);
 
+  console.dir(req.body);
+
   var like = req.body.likes;
+  var comment = req.body.comment;
 
   if (like == 'true') {
     client.connect(global.DB_URL, function(err, db) {
@@ -83,6 +86,39 @@ router.post('/:id', function(req, res) {
           }); // update
       }); // find
     }); // connect
+  } else if (comment != null) {
+    client.connect(global.DB_URL, function(err, db) {
+      if (err) {
+        console.log('Error updating image: ' + err);
+        res.writeHead(400);
+        res.end('Error updating image');
+        return err;
+      }
+
+      db.collection('posts').find({ "_id" : req.params.id }).limit(1).toArray(function(err, items) {
+        if (err) {
+          console.log('Error updating image: ' + err);
+          res.writeHead(400);
+          res.end('Error updating image');
+          return err;
+        }
+
+        var comments = items[0].comments;
+        console.log("Comments now: " + comments);
+        comments.push(comment);
+        console.log('New comment: ' + comments);
+
+        db.collection('posts').updateOne(
+          { '_id' : req.params.id },
+          { $set: {
+              'comments' : comments,
+              'updated' : Date.now()
+          }}, function(err, results) {
+            console.log('Comment posted');
+            res.end();
+        });
+      });
+    });
   }
 });
 
