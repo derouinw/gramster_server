@@ -68,6 +68,7 @@ app.get('/', function(req, res) {
               images[index].path = global.SITE_IMAGE_VIEW + image_data._id;
               images[index].title = image_data.title;
               images[index].time = image_data.time;
+              images[index].updated = image_data.updated;
               cb_done++;
 
               // If all cb's have finished, render the page
@@ -130,9 +131,9 @@ var server = app.listen(parseInt(port), function() {
 });
 
 function images_compare(a, b) {
-  if (a.time > b.time) {
+  if (a.updated > b.updated) {
     return -1;
-  } else if (a.time < b.time) {
+  } else if (a.updated < b.updated) {
     return 1;
   }
   return 0;
