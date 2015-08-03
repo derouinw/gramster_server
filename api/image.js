@@ -4,11 +4,23 @@
 var express = require('express');
 var global = require('../global');
 var bodyParser = require('body-parser');
+var path = require('path');
+var fs = require('fs');
+var mime = require('mime');
+var uid = require('uid2');
+var request = require('request');
+var busboy = require('connect-busboy');
+var aws = require('aws-sdk');
+var http = require('http');
 var router = express.Router();
 var client = require('mongodb').MongoClient;
 
 router.use(bodyParser.json()); // support json encoded bodies
 router.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+router.use(busboy()); // support file upload
+
+var TARGET_PATH = __dirname + '/../images/';
+var IMAGE_TYPES = ['image/jpeg', 'image/png'];
 
 // Handle /api/image/[id]
 router.get('/view/:id', function(req, res) {
@@ -120,7 +132,7 @@ router.post('/', function(req, res) {
 });
 
 // Update an image
-router.post('/:id', function(req, res) {
+router.post('/update/:id', function(req, res) {
   console.log('Updating image: ' + req.params.id);
 
   var like = req.body.likes;
@@ -187,6 +199,81 @@ router.post('/:id', function(req, res) {
       });
     });
   }
+});
+
+// Upload an image (/api/image/upload)
+router.post('/upload', function(req, res) {
+  console.log("Upload an image");
+  var fstream;
+	var title, description;
+	req.pipe(req.busboy);
+
+	req.busboy.on('field', function(fieldName, value) {
+    console.log(fieldName + ": " + value);
+		if (fieldName == 'title') {
+			title = value;
+		} else if (fieldName == 'description') {
+			description = value;
+		}
+	});
+
+	req.busboy.on('file', function(fieldname, file, filename) {
+		console.log('Uploading: ' + filename);
+
+		var type = mime.lookup(filename);
+		var extension = filename.split(/[.]+/).pop();
+
+		if (IMAGE_TYPES.indexOf(type) == -1) {
+			console.log('Upload filetype not supported');
+			return res.status(415).send('Supported image formats: jpeg, jpg, png');
+		}
+
+		var id = uid(22);
+		var targetName = id + '.' + extension;
+		var targetPath = path.join(TARGET_PATH, targetName);
+
+		fstream = fs.createWriteStream(targetPath);
+		file.pipe(fstream);
+		fstream.on('close', function() {
+
+			var image_data = {
+				_id : id,
+				title: title,
+				path: targetName,
+				description : description
+			};
+
+			aws.config.update({accessKeyId: global.AWS_ACCESS_KEY, secretAccessKey: global.AWS_SECRET_KEY});
+			var s3 = new aws.S3();
+			var params = {
+			    Bucket: global.S3_BUCKET,
+			    Key: targetName,
+			    Body: fs.createReadStream(targetPath),
+			    ContentType: "image/" + extension
+			};
+
+			s3.putObject(params, function(err, data) {
+				if (err) {
+					console.log(err);
+					return res.status(500).send('Upload failed');
+				} else {
+					var url = global.HOST_LOCAL + ':' + global.PORT + global.API_IMAGE_NEW;
+
+					request.post( {url : url, body : JSON.stringify(image_data)}, function(err, response, body) {
+						if (err) {
+							console.log('Upload failed: ' + err);
+							return res.status(500).send('Upload went wrong');
+						}
+
+						console.log('Upload successful:' + body);
+						res.writeHead(302, {
+							'Location' : global.HOST_LOCAL + ':' + global.PORT + global.SITE_IMAGE_VIEW + id });
+						res.end();
+					});
+				}
+			});
+		});
+	});
 });
 
 module.exports = router;

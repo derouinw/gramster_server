@@ -13,7 +13,7 @@ html
 				
 				var http = new XMLHttpRequest();
 				var link = window.location.href;
-				var url = '/api/image/' + link.substring(link.lastIndexOf('/')+1);
+				var url = '/api/image/update/' + link.substring(link.lastIndexOf('/')+1);
 				var params = "likes=true";
 				http.open("POST", url, true);
 
@@ -31,7 +31,7 @@ html
 				
 				var http = new XMLHttpRequest();
 				var link = window.location.href;
-				var url = '/api/image/' + link.substring(link.lastIndexOf('/')+1);
+				var url = '/api/image/update/' + link.substring(link.lastIndexOf('/')+1);
 				var params = "comment=" + text;
 				http.open("POST", url, true);
 
